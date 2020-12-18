@@ -30,11 +30,10 @@ const url = "https://ting55.com/book/20";
   console.log("All capters are downloaded");
 })();
 async function downloadCapter(browser: Browser, capter: Capter) {
-  console.log(`Start to analyse capter ${capter.capterName}`);
-
   const fileName = `./download/${capter.capterName}.mp3`;
   const isExist = await checkIfDownload(fileName);
   if (!isExist) {
+    console.log(`Start to analyse capter ${capter.capterName}`);
     const downloadUrl = await getCapterDownloadUrl(
       browser,
       capter.capterPageUrl
@@ -65,11 +64,11 @@ async function checkIfDownload(fileName: string) {
 async function getCapterDownloadUrl(browser: Browser, capterPageUrl: string) {
   const page = await browser.newPage();
 
-  await page.goto(capterPageUrl);
+  await page.goto(capterPageUrl, { waitUntil: "domcontentloaded" });
 
   let audioUrl: string | null = null;
   while (!audioUrl) {
-    delayMs(5000 * Math.random());
+    delayMs(60000 * Math.random());
 
     const audioEle = await page.$("audio");
     if (audioEle) {
