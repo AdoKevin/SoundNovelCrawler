@@ -34,10 +34,7 @@ async function downloadCapter(browser: Browser, capter: Capter) {
   const isExist = await checkIfDownload(fileName);
   if (!isExist) {
     console.log(`Start to analyse capter ${capter.capterName}`);
-    const downloadUrl = await getCapterDownloadUrl(
-      browser,
-      capter.capterPageUrl
-    );
+    const downloadUrl = await getCapterDownloadUrl(browser, capter);
 
     await downloadAudio(downloadUrl, fileName);
   }
@@ -61,15 +58,20 @@ async function checkIfDownload(fileName: string) {
   });
 }
 
-async function getCapterDownloadUrl(browser: Browser, capterPageUrl: string) {
+async function getCapterDownloadUrl(browser: Browser, capter: Capter) {
   const page = await browser.newPage();
 
-  await page.goto(capterPageUrl, { waitUntil: "domcontentloaded" });
+  await page.goto(capter.capterPageUrl, { waitUntil: "domcontentloaded" });
 
   let audioUrl: string | null = null;
+  let retryCounter = 0;
   while (!audioUrl) {
-    delayMs(60000 * Math.random());
-
+    await delayMs(60000 * Math.random());
+    console.log(
+      `Try to get capter ${
+        capter.capterName
+      } audio element for ${++retryCounter} times`
+    );
     const audioEle = await page.$("audio");
     if (audioEle) {
       audioUrl = await audioEle.evaluate((ele) => ele.getAttribute("src"));
