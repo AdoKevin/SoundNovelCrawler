@@ -67,6 +67,10 @@ async function getCapterDownloadUrl(browser: Browser, capter: Capter) {
   let retryCounter = 0;
   while (!audioUrl) {
     await delayMs(60000 * Math.random());
+
+    if (retryCounter % 5 === 0) {
+      await page.reload();
+    }
     console.log(
       `Try to get capter ${
         capter.capterName
