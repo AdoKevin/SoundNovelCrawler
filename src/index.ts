@@ -1,8 +1,8 @@
-import puppeteer, { Browser, ElementHandle } from "puppeteer";
-import cheerio from "cheerio";
 import axios from "axios";
-import pLimit from "p-limit";
+import cheerio from "cheerio";
 import fs from "fs";
+import pLimit from "p-limit";
+import puppeteer, { Browser } from "puppeteer";
 
 const limit = pLimit(2);
 interface Capter {
@@ -31,8 +31,35 @@ const url = "https://ting55.com/book/20";
 })();
 async function downloadCapter(browser: Browser, capter: Capter) {
   console.log(`Start to analyse capter ${capter.capterName}`);
-  const downloadUrl = await getCapterDownloadUrl(browser, capter.capterPageUrl);
-  await downloadAudio(downloadUrl, `./download/${capter.capterName}.mp3`);
+
+  const fileName = `./download/${capter.capterName}.mp3`;
+  const isExist = await checkIfDownload(fileName);
+  if (!isExist) {
+    const downloadUrl = await getCapterDownloadUrl(
+      browser,
+      capter.capterPageUrl
+    );
+
+    await downloadAudio(downloadUrl, fileName);
+  }
+}
+
+async function checkIfDownload(fileName: string) {
+  return new Promise<boolean>((resolve, reject) => {
+    fs.stat(fileName, (err, stat) => {
+      if (err) {
+        if (err.code === "ENOENT") {
+          resolve(false);
+        } else {
+          reject(err);
+        }
+      } else if (stat.isFile && stat.size > 0) {
+        resolve(true);
+      } else {
+        resolve(false);
+      }
+    });
+  });
 }
 
 async function getCapterDownloadUrl(browser: Browser, capterPageUrl: string) {
@@ -105,7 +132,7 @@ function downloadAudio(url: string, fileName: string) {
         })
         .catch((err) => {
           console.error(err);
-          return delayMs(5000 * Math.random()).then(() => {
+          return delayMs(60000 * Math.random()).then(() => {
             console.log(`Download ${fileName} failed, retrying`);
             downloadAudio(url, fileName);
           });
