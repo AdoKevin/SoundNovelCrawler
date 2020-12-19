@@ -25,13 +25,18 @@ const url = "https://ting55.com/book/20";
 
   const chapters = await getChapters(url);
 
-  const downloadTasks = chapters.map((c) => {
-    limit(() => downloadChapter(browser, c));
-  });
+  const limit = pLimit(4);
+  const downloadTasks = chapters.map((c) =>
+    limit(() => downloadChapter(browser, c))
+  );
 
   await Promise.all(downloadTasks);
 
-  console.log("All chapters are downloaded");
+  await browser.close();
+  console.log("All capters are downloaded, press any key to exit.");
+  process.stdin.setRawMode(true);
+  process.stdin.resume();
+  process.stdin.on("data", process.exit.bind(process, 0));
 })();
 
 async function downloadChapter(browser: Browser, chapter: Chapter) {
