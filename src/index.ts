@@ -5,7 +5,6 @@ import pLimit from "p-limit";
 import puppeteer, { Browser } from "puppeteer";
 import { VolumeAdjuster } from "./VolumeAdjuster";
 
-const limit = pLimit(2);
 interface Chapter {
   chapterIndex: number;
   chapterName: string;

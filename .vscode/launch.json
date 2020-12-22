@@ -5,11 +5,7 @@
       "request": "launch",
       "name": "Launch Program",
       "runtimeArgs": ["-r", "ts-node/register"],
-      "args": ["${workspaceFolder}/src/index.ts"],
-      "env": {
-        "FFPROBE_PATH": "D:/ffmpeg/bin/ffprobe.exe",
-        "FFMPEG_PATH": "D:/ffmpeg/bin/ffmpeg.exe"
-      }
+      "args": ["${workspaceFolder}/src/index.ts"]
     }
   ]
 }

@@ -4,6 +4,9 @@ import os from "os";
 import path from "path";
 import { promisify } from "util";
 
+const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path;
+ffmpeg.setFfmpegPath(ffmpegPath);
+
 const fsUnlink = promisify(fs.unlink);
 const fsCopyFile = promisify(fs.copyFile);
 
