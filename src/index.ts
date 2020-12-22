@@ -3,7 +3,7 @@ import cheerio from "cheerio";
 import fs from "fs";
 import pLimit from "p-limit";
 import puppeteer, { Browser } from "puppeteer";
-import { AudioAdjuster } from "./AudioAdjuster";
+import { VolumeAdjuster } from "./VolumeAdjuster";
 
 const limit = pLimit(2);
 interface Chapter {
@@ -15,8 +15,11 @@ interface Chapter {
 const url = "https://ting55.com/book/20";
 (async () => {
   const browser = await puppeteer.launch({
-    headless: true,
-    args: ["--use-fake-ui-for-media-stream"],
+    headless: false,
+    args: [
+      "--use-fake-ui-for-media-stream",
+      "--autoplay-policy=no-user-gesture-required",
+    ],
     ignoreDefaultArgs: ["--mute-audio"],
   });
 
@@ -30,17 +33,24 @@ const url = "https://ting55.com/book/20";
 
   console.log("All chapters are downloaded");
 })();
+
 async function downloadChapter(browser: Browser, chapter: Chapter) {
+  console.log(`Start downloading chapter ${chapter.chapterName}`);
   const fileName = `./download/${chapter.chapterName}.mp3`;
   const isExist = await checkIfDownload(fileName);
   if (!isExist) {
-    console.log(`Start to analyse chapter ${chapter.chapterName}`);
     const downloadUrl = await getChapterDownloadUrl(browser, chapter);
 
     await downloadAudio(downloadUrl, fileName);
-
-    new AudioAdjuster(fileName).adjustVolumn(5);
+  } else {
+    console.log(`${chapter.chapterName} is downloaded.`);
   }
+
+  console.log(`Start adjusting volume
+
+`);
+  await new VolumeAdjuster(fileName).adjustVolume(15);
+  console.log(`Finished downloading chapter ${chapter.chapterName}`);
 }
 
 async function checkIfDownload(fileName: string) {
@@ -69,7 +79,7 @@ async function getChapterDownloadUrl(browser: Browser, chapter: Chapter) {
   let audioUrl: string | null = null;
   let retryCounter = 0;
   while (!audioUrl) {
-    await delayMs(60000 * Math.random());
+    await delayMs(10000 * Math.random());
 
     if (retryCounter % 5 === 0) {
       await page.reload();
@@ -113,7 +123,7 @@ async function getChapters(listUrl: string): Promise<Chapter[]> {
     });
 
   console.log(`Got ${chapters.length} chapters.`);
-  return [chapters[0]];
+  return chapters;
 }
 
 function downloadAudio(url: string, fileName: string) {
@@ -135,13 +145,13 @@ function downloadAudio(url: string, fileName: string) {
             reject(err);
           });
           stream.on("close", () => {
-            console.log(`Complete download ${fileName} at ${url}`);
+            console.log(`Complete downloading ${fileName} at ${url}`);
             resolve();
           });
         })
         .catch((err) => {
           console.error(err);
-          return delayMs(60000 * Math.random()).then(() => {
+          return delayMs(10000 * Math.random()).then(() => {
             console.log(`Download ${fileName} failed, retrying`);
             downloadAudio(url, fileName);
           });

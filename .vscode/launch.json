@@ -8,7 +8,7 @@
       "args": ["${workspaceFolder}/src/index.ts"],
       "env": {
         "FFPROBE_PATH": "D:/ffmpeg/bin/ffprobe.exe",
-        "FFMPEG_PATH ": "D:/ffmpeg/bin/ffmpeg.exe"
+        "FFMPEG_PATH": "D:/ffmpeg/bin/ffmpeg.exe"
       }
     }
   ]
