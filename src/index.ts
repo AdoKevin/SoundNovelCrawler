@@ -3,40 +3,43 @@ import cheerio from "cheerio";
 import fs from "fs";
 import pLimit from "p-limit";
 import puppeteer, { Browser } from "puppeteer";
+import { AudioAdjuster } from "./AudioAdjuster";
 
 const limit = pLimit(2);
-interface Capter {
-  capterIndex: number;
-  capterName: string;
-  capterPageUrl: string;
+interface Chapter {
+  chapterIndex: number;
+  chapterName: string;
+  chapterPageUrl: string;
 }
 
 const url = "https://ting55.com/book/20";
 (async () => {
   const browser = await puppeteer.launch({
-    headless: false,
+    headless: true,
     args: ["--use-fake-ui-for-media-stream"],
     ignoreDefaultArgs: ["--mute-audio"],
   });
 
-  const capters = await getCapters(url);
+  const chapters = await getChapters(url);
 
-  const downloadTasks = capters.map((c) => {
-    limit(() => downloadCapter(browser, c));
+  const downloadTasks = chapters.map((c) => {
+    limit(() => downloadChapter(browser, c));
   });
 
   await Promise.all(downloadTasks);
 
-  console.log("All capters are downloaded");
+  console.log("All chapters are downloaded");
 })();
-async function downloadCapter(browser: Browser, capter: Capter) {
-  const fileName = `./download/${capter.capterName}.mp3`;
+async function downloadChapter(browser: Browser, chapter: Chapter) {
+  const fileName = `./download/${chapter.chapterName}.mp3`;
   const isExist = await checkIfDownload(fileName);
   if (!isExist) {
-    console.log(`Start to analyse capter ${capter.capterName}`);
-    const downloadUrl = await getCapterDownloadUrl(browser, capter);
+    console.log(`Start to analyse chapter ${chapter.chapterName}`);
+    const downloadUrl = await getChapterDownloadUrl(browser, chapter);
 
     await downloadAudio(downloadUrl, fileName);
+
+    new AudioAdjuster(fileName).adjustVolumn(5);
   }
 }
 
@@ -58,10 +61,10 @@ async function checkIfDownload(fileName: string) {
   });
 }
 
-async function getCapterDownloadUrl(browser: Browser, capter: Capter) {
+async function getChapterDownloadUrl(browser: Browser, chapter: Chapter) {
   const page = await browser.newPage();
 
-  await page.goto(capter.capterPageUrl, { waitUntil: "domcontentloaded" });
+  await page.goto(chapter.chapterPageUrl, { waitUntil: "domcontentloaded" });
 
   let audioUrl: string | null = null;
   let retryCounter = 0;
@@ -72,8 +75,8 @@ async function getCapterDownloadUrl(browser: Browser, capter: Capter) {
       await page.reload();
     }
     console.log(
-      `Try to get capter ${
-        capter.capterName
+      `Try to get chapter ${
+        chapter.chapterName
       } audio element for ${++retryCounter} times`
     );
     const audioEle = await page.$("audio");
@@ -87,7 +90,7 @@ async function getCapterDownloadUrl(browser: Browser, capter: Capter) {
   return audioUrl;
 }
 
-async function getCapters(listUrl: string): Promise<Capter[]> {
+async function getChapters(listUrl: string): Promise<Chapter[]> {
   const res = await axios.get<string>(listUrl, {
     responseType: "text",
     headers: {
@@ -97,25 +100,26 @@ async function getCapters(listUrl: string): Promise<Capter[]> {
   });
   const $ = cheerio.load(res.data);
   const bookName = $(".binfo h1").text();
-  const capters = $(".playlist .plist ul a")
+  const chapters = $(".playlist .plist ul a")
     .toArray()
     .map((playItem: any, index) => {
       const href = playItem.attribs.href;
       const itemPageUrl = `${new URL(url).origin}/${href}`;
       return {
-        capterPageUrl: itemPageUrl,
-        capterIndex: index,
-        capterName: `${bookName}-${index + 1}`,
+        chapterPageUrl: itemPageUrl,
+        chapterIndex: index,
+        chapterName: `${bookName}-${index + 1}`,
       };
     });
 
-  return capters;
+  console.log(`Got ${chapters.length} chapters.`);
+  return [chapters[0]];
 }
 
 function downloadAudio(url: string, fileName: string) {
   console.log(`Start downloading ${fileName} at ${url}`);
   return new Promise<void>((resolve, reject) => {
-    fs.truncate(fileName, () => {
+    fs.unlink(fileName, () => {
       axios({
         method: "get",
         url,

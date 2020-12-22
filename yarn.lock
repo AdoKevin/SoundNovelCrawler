@@ -9,6 +9,13 @@
   dependencies:
     "@types/node" "*"
 
+"@types/fluent-ffmpeg@^2.1.16":
+  version "2.1.16"
+  resolved "http://172.16.148.174:8081/repository/npm/@types/fluent-ffmpeg/-/fluent-ffmpeg-2.1.16.tgz#63949b0cb6bc88c9157a579cdd80858a269f3a3a"
+  integrity sha1-Y5SbDLa8iMkVelec3YCFiiafOjo=
+  dependencies:
+    "@types/node" "*"
+
 "@types/node@*":
   version "14.14.14"
   resolved "https://registry.npm.taobao.org/@types/node/download/@types/node-14.14.14.tgz?cache=0&sync_timestamp=1608047811130&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40types%2Fnode%2Fdownload%2F%40types%2Fnode-14.14.14.tgz#f7fd5f3cc8521301119f63910f0fb965c7d761ae"
@@ -37,6 +44,11 @@ arg@^4.1.0:
   version "4.1.3"
   resolved "https://registry.npm.taobao.org/arg/download/arg-4.1.3.tgz#269fc7ad5b8e42cb63c896d5666017261c144089"
   integrity sha1-Jp/HrVuOQstjyJbVZmAXJhwUQIk=
+
+async@>=0.2.9:
+  version "3.2.0"
+  resolved "http://172.16.148.174:8081/repository/npm/async/-/async-3.2.0.tgz#b3a2685c5ebb641d3de02d161002c60fc9f85720"
+  integrity sha1-s6JoXF67ZB094C0WEALGD8n4VyA=
 
 axios@^0.21.0:
   version "0.21.0"
@@ -246,6 +258,14 @@ find-up@^4.0.0:
     locate-path "^5.0.0"
     path-exists "^4.0.0"
 
+fluent-ffmpeg@^2.1.2:
+  version "2.1.2"
+  resolved "http://172.16.148.174:8081/repository/npm/fluent-ffmpeg/-/fluent-ffmpeg-2.1.2.tgz#c952de2240f812ebda0aa8006d7776ee2acf7d74"
+  integrity sha1-yVLeIkD4EuvaCqgAbXd27irPfXQ=
+  dependencies:
+    async ">=0.2.9"
+    which "^1.1.1"
+
 follow-redirects@^1.10.0:
   version "1.13.1"
   resolved "https://registry.npm.taobao.org/follow-redirects/download/follow-redirects-1.13.1.tgz?cache=0&sync_timestamp=1607916915121&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Ffollow-redirects%2Fdownload%2Ffollow-redirects-1.13.1.tgz#5f69b813376cee4fd0474a3aba835df04ab763b7"
@@ -317,6 +337,11 @@ inherits@2, inherits@^2.0.1, inherits@^2.0.3, inherits@^2.0.4:
   version "2.0.4"
   resolved "https://registry.npm.taobao.org/inherits/download/inherits-2.0.4.tgz#0fa2c64f932917c3433a0ded55363aae37416b7c"
   integrity sha1-D6LGT5MpF8NDOg3tVTY6rjdBa3w=
+
+isexe@^2.0.0:
+  version "2.0.0"
+  resolved "http://172.16.148.174:8081/repository/npm/isexe/-/isexe-2.0.0.tgz#e8fbf374dc556ff8947a10dcb0572d633f2cfa10"
+  integrity sha1-6PvzdNxVb/iUehDcsFctYz8s+hA=
 
 locate-path@^5.0.0:
   version "5.0.0"
@@ -446,7 +471,7 @@ pump@^3.0.0:
 
 puppeteer@^5.5.0:
   version "5.5.0"
-  resolved "https://registry.npm.taobao.org/puppeteer/download/puppeteer-5.5.0.tgz#331a7edd212ca06b4a556156435f58cbae08af00"
+  resolved "http://172.16.148.174:8081/repository/npm/puppeteer/-/puppeteer-5.5.0.tgz#331a7edd212ca06b4a556156435f58cbae08af00"
   integrity sha1-Mxp+3SEsoGtKVWFWQ19Yy64IrwA=
   dependencies:
     debug "^4.1.0"
@@ -558,6 +583,13 @@ util-deprecate@^1.0.1:
   version "1.0.2"
   resolved "https://registry.npm.taobao.org/util-deprecate/download/util-deprecate-1.0.2.tgz#450d4dc9fa70de732762fbd2d4a28981419a0ccf"
   integrity sha1-RQ1Nyfpw3nMnYvvS1KKJgUGaDM8=
+
+which@^1.1.1:
+  version "1.3.1"
+  resolved "http://172.16.148.174:8081/repository/npm/which/-/which-1.3.1.tgz#a45043d54f5805316da8d62f9f50918d3da70b0a"
+  integrity sha1-pFBD1U9YBTFtqNYvn1CRjT2nCwo=
+  dependencies:
+    isexe "^2.0.0"
 
 wrappy@1:
   version "1.0.2"
